@@ -1,0 +1,26 @@
+{
+  "name": "backend-v2",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.5",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.44.6",
+    "hono": "^4.9.9",
+    "postgres": "^3.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "drizzle-kit": "^0.31.5",
+    "tsx": "^4.20.6",
+    "typescript": "^5.8.3"
+  }
+}
