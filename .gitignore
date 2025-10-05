@@ -10,6 +10,7 @@
 
 # deps
 node_modules/
+package-lock.json
 
 # env
 .env
@@ -26,3 +27,7 @@ lerna-debug.log*
 
 # misc
 .DS_Store
+
+dist/
+build/
+drizzle/

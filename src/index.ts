@@ -2,7 +2,7 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { userRoutes } from './presentation/v1/routes/user.routes.js';
+import { routes } from './presentation/v1/routes/routes.js';
 import * as dotenv from 'dotenv';
 
 // Load environment variables
@@ -27,7 +27,7 @@ app.get('/', (c) => {
 });
 
 // API Routes
-app.route('/api/v1/users', userRoutes);
+app.route('/api', routes);
 
 // Error handling
 app.onError((err, c) => {

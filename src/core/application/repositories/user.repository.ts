@@ -8,4 +8,5 @@ export interface UserRepository {
   create(userData: CreateUserData): Promise<User>;
   update(id: string, userData: UpdateUserData): Promise<User | null>;
   delete(id: string): Promise<boolean>;
+  findByIdWithRoles(id: string): Promise<any | null>;
 }

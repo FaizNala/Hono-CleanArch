@@ -1,4 +1,5 @@
-// Infrastructure Layer Exports
-export { db, client } from './database/index.js';
-export { users } from './database/user.schema.js';
-export { DrizzleUserRepository } from './repositories/drizzle-user.repository.js';
+// Infrastructure layer exports
+export * from './repositories/drizzle.user.repository.js';
+export * from './repositories/drizzle-role.repository.js';
+export * from './repositories/drizzle-user-role.repository.js';
+export * from './database/index.js';
