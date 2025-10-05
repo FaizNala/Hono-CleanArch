@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres = require('postgres');
+import postgres from 'postgres';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
