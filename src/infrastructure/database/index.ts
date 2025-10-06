@@ -1,21 +1,18 @@
+
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as dotenv from 'dotenv';
+import * as schema from './schema';
 
 dotenv.config();
 
-// Database connection
 const connectionString = process.env.DATABASE_URL;
-
 if (!connectionString) {
   throw new Error('DATABASE_URL environment variable is required');
 }
 
-// Create postgres client
 const client = postgres(connectionString);
 
-// Create drizzle instance
-export const db = drizzle(client);
-
-// Export client for cleanup if needed
+// Pass schema generic for Queries API compatibility
+export const db = drizzle(client, { schema });
 export { client };

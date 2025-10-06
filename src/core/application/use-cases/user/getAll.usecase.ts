@@ -6,4 +6,4 @@ export class GetAllUsersUseCase {
   async execute() {
     return await this.userRepository.findAll();
   }
-}
+} 

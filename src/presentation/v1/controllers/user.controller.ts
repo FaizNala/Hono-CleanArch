@@ -1,13 +1,13 @@
-import type { Context } from 'hono';
-import { CreateUserUseCase } from '../../../core/application/use-cases/user/create-user.usecase.js';
-import { GetUserByIdUseCase } from '../../../core/application/use-cases/user/get-user-by-id.usecase.js';
-import { GetAllUsersUseCase } from '../../../core/application/use-cases/user/get-all-users.usecase.js';
-import { UpdateUserUseCase } from '../../../core/application/use-cases/user/update-user.usecase.js';
-import { DeleteUserUseCase } from '../../../core/application/use-cases/user/delete-user.usecase.js';
-import type { UserRepository } from '../../../core/application/repositories/user.repository.js';
-import type { RoleRepository } from '../../../core/application/repositories/role.repository.js';
-import type { UserRoleRepository } from '../../../core/application/repositories/user-role.repository.js';
-import { success, error, STATUS } from '../../../utils/response';
+import type { Context } from "hono";
+import { CreateUserUseCase } from "../../../core/application/use-cases/user/create.usecase.js";
+import { GetUserByIdUseCase } from "../../../core/application/use-cases/user/getById.usecase.js";
+import { GetAllUsersUseCase } from "../../../core/application/use-cases/user/getAll.usecase.js";
+import { UpdateUserUseCase } from "../../../core/application/use-cases/user/update.usecase.js";
+import { DeleteUserUseCase } from "../../../core/application/use-cases/user/delete.usecase.js";
+import type { UserRepository } from "../../../core/application/repositories/user.repository.js";
+import type { RoleRepository } from "../../../core/application/repositories/role.repository.js";
+import type { UserRoleRepository } from "../../../core/application/repositories/user-role.repository.js";
+import { success, error, STATUS } from "../../../utils/response";
 
 export class UserController {
   private createUserUseCase: CreateUserUseCase;
@@ -32,41 +32,31 @@ export class UserController {
 
   async getAllUsers(c: Context) {
     try {
-      const preload = c.req.query('preload') === 'true';
-      if (preload && typeof this.userRepository.findByIdWithRoles === 'function') {
-        // Ambil semua user dan preload roles
-        const users = await this.getAllUsersUseCase.execute();
-        const usersWithRoles = await Promise.all(users.map(async (u) => {
-          return await this.userRepository.findByIdWithRoles(u.id);
-        }));
-        return success(c, usersWithRoles);
-      } else {
-        const users = await this.getAllUsersUseCase.execute();
-        return success(c, users);
-      }
+      const users = await this.getAllUsersUseCase.execute();
+      return success(c, users);
     } catch (err) {
-      console.error('Error getting all users:', err);
-      return error(c, 'Internal server error', STATUS.SERVER_ERROR);
+      console.error("Error getting all users:", err);
+      return error(c, "Internal server error", STATUS.SERVER_ERROR);
     }
   }
 
   async getUserById(c: Context) {
     try {
-      const id = c.req.param('id');
-      const preload = c.req.query('preload') === 'true';
+      const id = c.req.param("id");
+      const preload = c.req.query("preload") === "true";
       let user;
-      if (preload && typeof this.userRepository.findByIdWithRoles === 'function') {
+      if (preload) {
         user = await this.userRepository.findByIdWithRoles(id);
       } else {
         user = await this.getUserByIdUseCase.execute(id);
       }
       if (!user) {
-        return error(c, 'User not found', STATUS.NOT_FOUND);
+        return error(c, "User not found", STATUS.NOT_FOUND);
       }
       return success(c, user);
     } catch (err) {
-      console.error('Error getting user by ID:', err);
-      return error(c, 'Internal server error', STATUS.SERVER_ERROR);
+      console.error("Error getting user by ID:", err);
+      return error(c, "Internal server error", STATUS.SERVER_ERROR);
     }
   }
 

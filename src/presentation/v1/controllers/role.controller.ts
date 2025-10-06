@@ -1,9 +1,9 @@
 import type { Context } from 'hono';
-import { CreateRoleUseCase } from '../../../core/application/use-cases/role/create-role.usecase.js';
-import { GetAllRolesUseCase } from '../../../core/application/use-cases/role/get-all-roles.usecase.js';
-import { GetRoleByIdUseCase } from '../../../core/application/use-cases/role/get-role-by-id.usecase.js';
-import { UpdateRoleUseCase } from '../../../core/application/use-cases/role/update-role.usecase.js';
-import { DeleteRoleUseCase } from '../../../core/application/use-cases/role/delete-role.usecase.js';
+import { CreateRoleUseCase } from '../../../core/application/use-cases/role/create.usecase.js';
+import { GetAllRolesUseCase } from '../../../core/application/use-cases/role/getAll.usecase.js';
+import { GetRoleByIdUseCase } from '../../../core/application/use-cases/role/getById.usecase.js';
+import { UpdateRoleUseCase } from '../../../core/application/use-cases/role/update.usecase.js';
+import { DeleteRoleUseCase } from '../../../core/application/use-cases/role/delete.usecase.js';
 import { DrizzleRoleRepository } from '../../../infrastructure/repositories/drizzle-role.repository.js';
 import { success, error, STATUS } from '../../../utils/response.js';
 
