@@ -1,52 +1,32 @@
-// Domain Entity - Business Rules
-export interface Role {
+import { CreateRoleSchema, UpdateRoleSchema } from "../../lib/validation/role.validation.js";
+import type { CreateRoleData, UpdateRoleData } from "../../lib/validation/role.validation.js";
+
+// Domain Entity - Business Rules (Functional approach with Zod validation)
+export type Role = {
   id: number;
   name: string;
-}
+};
 
-export interface CreateRoleData {
-  name: string;
-}
+// Re-export validation types
+export type { CreateRoleData, UpdateRoleData };
 
-export interface UpdateRoleData {
-  name?: string;
-}
-
-// Domain validation rules
-export class RoleEntity {
-  constructor(
-    public readonly id: number,
-    public readonly name: string
-  ) {
-    this.validateName(name);
-  }
+// Factory function to create a new Role entity with validation
+export function createRole(data: CreateRoleData): Pick<Role, "name"> {
+  // Validate using Zod schema
+  const validatedData = CreateRoleSchema.parse(data);
   
-  // Validation methods
-  private validateName(name: string): void {
-    if (!name || name.trim().length < 2) {
-      throw new Error("Role name must be at least 2 characters long");
-    }
-    if (name.trim().length > 100) {
-      throw new Error("Role name must not exceed 100 characters");
-    }
-  }
+  return {
+    name: validatedData.name,
+  };
+}
 
-  // Factory method to create a new Role entity
-  static create(data: CreateRoleData): Pick<Role, "name"> {
-    const entity = new RoleEntity(0, data.name);
-    return {
-      name: entity.name,
-    };
-  }
-
-  // Method to update role details
-  update(data: UpdateRoleData): Role {
-    if (data.name) {
-      this.validateName(data.name);
-    }
-    return new RoleEntity(
-      this.id,
-      data.name ?? this.name
-    );
-  }
+// Function to update role details with validation
+export function updateRole(currentRole: Role, data: UpdateRoleData): Role {
+  // Validate using Zod schema
+  const validatedData = UpdateRoleSchema.parse(data);
+  
+  return {
+    ...currentRole,
+    name: validatedData.name ?? currentRole.name,
+  };
 }

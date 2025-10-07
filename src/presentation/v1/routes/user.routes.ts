@@ -3,15 +3,19 @@ import { UserController } from '../controllers/user.controller.js';
 import { DrizzleUserRepository } from '../../../infrastructure/repositories/drizzle.user.repository.js';
 import { DrizzleRoleRepository } from '../../../infrastructure/repositories/drizzle.role.repository.js';
 import { DrizzleUserRoleRepository } from '../../../infrastructure/repositories/drizzle.userRole.repository.js';
+import type { Repositories } from '../../../lib/types/repositories.js';
 
 // Create router
 const userRoutes = new Hono();
 
 // Initialize dependencies
-const userRepository = new DrizzleUserRepository();
-const roleRepository = new DrizzleRoleRepository();
-const userRoleRepository = new DrizzleUserRoleRepository();
-const userController = new UserController(userRepository, roleRepository, userRoleRepository);
+const repositories: Repositories = {
+  user: new DrizzleUserRepository(),
+  role: new DrizzleRoleRepository(),
+  userRole: new DrizzleUserRoleRepository(),
+};
+
+const userController = UserController(repositories);
 
 // Routes
 userRoutes.get('/', (c) => userController.getAllUsers(c));

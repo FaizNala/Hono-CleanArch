@@ -1,62 +1,48 @@
-import type { UserRepository } from '../../repositories/user.repository.js';
-import type { RoleRepository } from '../../repositories/role.repository.js';
-import type { UserRoleRepository } from '../../repositories/userRole.repository.js';
-import type { CreateUserData } from '../../../domain/user.entity.js';
-import { UserEntity } from '../../../domain/user.entity.js';
-import { UserRoleEntity } from '../../../domain/userRole.entity.js';
+import type { CreateUserData } from '../../../../lib/validation/user.validation.js';
+import { createUser } from '../../../domain/user.entity.js';
+import { createUserRole } from '../../../domain/userRole.entity.js';
+import type { Repositories } from '../../../../lib/types/repositories.js';
 import * as bcrypt from 'bcrypt';
 
-export class CreateUserUseCase {
-  constructor(
-    private userRepository: UserRepository,
-    private roleRepository?: RoleRepository,
-    private userRoleRepository?: UserRoleRepository
-  ) {}
+export async function createUserUseCase( userData: CreateUserData, repositories: Repositories ) {
+  // Business logic validation
+  const existingUser = await repositories.user.findByEmail(userData.email);
+  if (existingUser) {
+    throw new Error('User with this email already exists');
+  }
 
-  async execute(userData: CreateUserData) {
-    // Business logic validation
-    const existingUser = await this.userRepository.findByEmail(userData.email);
-    if (existingUser) {
-      throw new Error('User with this email already exists');
-    }
-
-    // Validate roles if provided
-    if (userData.roleIds && userData.roleIds.length > 0) {
-      if (!this.roleRepository) {
-        throw new Error('Role repository is required when assigning roles');
-      }
-      
-      for (const roleId of userData.roleIds) {
-        const role = await this.roleRepository.findById(roleId);
-        if (!role) {
-          throw new Error(`Role with ID ${roleId} not found`);
-        }
+  // Validate roles if provided
+  if (userData.roleIds && userData.roleIds.length > 0) {
+    for (const roleId of userData.roleIds) {
+      const role = await repositories.role.findById(roleId);
+      if (!role) {
+        throw new Error(`Role with ID ${roleId} not found`);
       }
     }
+  }
 
-    // Hash password
+  // Hash password
   const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-    // Create domain entity (validation happens here)
-    const userDomainData = UserEntity.create(userData);
+  // Create domain entity (validation happens here via Zod)
+  const userDomainData = createUser(userData);
 
-    // Create user
-    const createdUser = await this.userRepository.create({
-      ...userDomainData,
-      password: hashedPassword,
-    });
+  // Create user
+  const createdUser = await repositories.user.create({
+    ...userDomainData,
+    password: hashedPassword,
+  });
 
-    // Assign roles if provided
-    if (userData.roleIds && userData.roleIds.length > 0 && this.userRoleRepository) {
-      for (const roleId of userData.roleIds) {
-        const userRoleData = UserRoleEntity.create({
-          userId: createdUser.id,
-          roleId: roleId,
-        });
-        await this.userRoleRepository.create(userRoleData);
-      }
+  // Assign roles if provided
+  if (userData.roleIds && userData.roleIds.length > 0) {
+    for (const roleId of userData.roleIds) {
+      const userRoleData = createUserRole({
+        userId: createdUser.id,
+        roleId: roleId,
+      });
+      await repositories.userRole.create(userRoleData);
     }
-
-    return createdUser;
   }
+
+  return createdUser;
 }

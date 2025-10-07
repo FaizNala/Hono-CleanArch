@@ -1,10 +1,7 @@
 import { eq } from "drizzle-orm";
 import type { UserRepository } from "../../core/application/repositories/user.repository.js";
-import type {
-  User,
-  CreateUserData,
-  UpdateUserData,
-} from "../../core/domain/user.entity.js";
+import type { User } from "../../core/domain/user.entity.js";
+import type { CreateUserData, UpdateUserData } from "../../lib/validation/user.validation.js";
 import { db } from "../database/index.js";
 import { users } from "../database/user.schema.js";
 

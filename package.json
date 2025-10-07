@@ -15,7 +15,8 @@
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.6",
     "hono": "^4.9.9",
-    "postgres": "^3.4.7"
+    "postgres": "^3.4.7",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

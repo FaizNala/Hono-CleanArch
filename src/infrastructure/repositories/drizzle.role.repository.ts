@@ -1,5 +1,6 @@
 import type { RoleRepository } from '../../core/application/repositories/role.repository.js';
-import type { Role, CreateRoleData, UpdateRoleData } from '../../core/domain/role.entity.js';
+import type { Role } from '../../core/domain/role.entity.js';
+import type { CreateRoleData, UpdateRoleData } from '../../lib/validation/role.validation.js';
 import { db } from '../database/index.js';
 import { roles } from '../database/schema.js';
 import { eq } from 'drizzle-orm';

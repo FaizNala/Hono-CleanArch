@@ -1,7 +1,8 @@
-import type { User, CreateUserData, UpdateUserData } from '../../domain/user.entity.js';
+import type { User } from '../../domain/user.entity.js';
+import type { CreateUserData, UpdateUserData } from '../../../lib/validation/user.validation.js';
 
-// Repository Interface - Contract for data access
-export interface UserRepository {
+// Repository Type - Contract for data access (Functional approach)
+export type UserRepository = {
   findAll(): Promise<any[]>;
   findById(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
@@ -9,4 +10,4 @@ export interface UserRepository {
   create(userData: CreateUserData): Promise<User>;
   update(id: string, userData: UpdateUserData): Promise<User | null>;
   delete(id: string): Promise<boolean>;
-}
+};

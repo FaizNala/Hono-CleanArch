@@ -1,79 +1,72 @@
 import type { Context } from 'hono';
-import { CreateRoleUseCase } from '../../../core/application/use-cases/role/create.usecase.js';
-import { GetAllRolesUseCase } from '../../../core/application/use-cases/role/getAll.usecase.js';
-import { GetRoleByIdUseCase } from '../../../core/application/use-cases/role/getById.usecase.js';
-import { UpdateRoleUseCase } from '../../../core/application/use-cases/role/update.usecase.js';
-import { DeleteRoleUseCase } from '../../../core/application/use-cases/role/delete.usecase.js';
-import { DrizzleRoleRepository } from '../../../infrastructure/repositories/drizzle.role.repository.js';
-import { success, error, STATUS } from '../../../utils/response.js';
+import { createRoleUseCase } from '../../../core/application/use-cases/role/create.usecase.js';
+import { getAllRolesUseCase } from '../../../core/application/use-cases/role/getAll.usecase.js';
+import { getRoleByIdUseCase } from '../../../core/application/use-cases/role/getById.usecase.js';
+import { updateRoleUseCase } from '../../../core/application/use-cases/role/update.usecase.js';
+import { deleteRoleUseCase } from '../../../core/application/use-cases/role/delete.usecase.js';
+import type { RoleRepository } from '../../../core/application/repositories/role.repository.js';
+import { success, STATUS } from '../../../lib/utils/response.js';
+import { handleError, getNumericParamId } from '../../../lib/utils/errorHandler.js';
+import { CreateRoleSchema, UpdateRoleSchema } from '../../../lib/validation/role.validation.js';
 
-const roleRepository = new DrizzleRoleRepository();
-
-export class RoleController {
-  static async create(c: Context) {
-    try {
-      const roleData = await c.req.json();
-      const createRoleUseCase = new CreateRoleUseCase(roleRepository);
-      const role = await createRoleUseCase.execute(roleData);
-      return success(c, role, STATUS.CREATED);
-    } catch (err) {
-      return error(c, err instanceof Error ? err.message : 'Failed to create role');
-    }
-  }
-
-  static async getAll(c: Context) {
-    try {
-      const getAllRolesUseCase = new GetAllRolesUseCase(roleRepository);
-      const roles = await getAllRolesUseCase.execute();
-      return success(c, roles);
-    } catch (err) {
-      return error(c, err instanceof Error ? err.message : 'Failed to get roles');
-    }
-  }
-
-  static async getById(c: Context) {
-    try {
-      const id = parseInt(c.req.param('id'));
-      if (isNaN(id)) {
-        return error(c, 'Invalid role ID');
+export function RoleController(roleRepository: RoleRepository) {
+  return {
+    async create(c: Context) {
+      try {
+        const body = await c.req.json();
+        
+        // Validate request body using Zod
+        const validatedData = CreateRoleSchema.parse(body);
+        
+        const role = await createRoleUseCase(validatedData, roleRepository);
+        return success(c, role, STATUS.CREATED);
+      } catch (err) {
+        return handleError(c, err, "creating role");
       }
-      
-      const getRoleByIdUseCase = new GetRoleByIdUseCase(roleRepository);
-      const role = await getRoleByIdUseCase.execute(id);
-      return success(c, role);
-    } catch (err) {
-      return error(c, err instanceof Error ? err.message : 'Failed to get role');
-    }
-  }
+    },
 
-  static async update(c: Context) {
-    try {
-      const id = parseInt(c.req.param('id'));
-      if (isNaN(id)) {
-        return error(c, 'Invalid role ID');
+    async getAll(c: Context) {
+      try {
+        const roles = await getAllRolesUseCase(roleRepository);
+        return success(c, roles);
+      } catch (err) {
+        return handleError(c, err, "getting all roles");
       }
-      
-      const roleData = await c.req.json();
-      const updateRoleUseCase = new UpdateRoleUseCase(roleRepository);
-      const role = await updateRoleUseCase.execute(id, roleData);
-      return success(c, role);
-    } catch (err) {
-      return error(c, err instanceof Error ? err.message : 'Failed to update role');
-    }
-  }
+    },
 
-  static async delete(c: Context) {
-    try {
-      const id = parseInt(c.req.param('id'));
-      if (isNaN(id)) {
-        return error(c, 'Invalid role ID');
+    async getById(c: Context) {
+      try {
+        const id = getNumericParamId(c);
+        const role = await getRoleByIdUseCase(id, roleRepository);
+        return success(c, role);
+      } catch (err) {
+        return handleError(c, err, "getting role by ID");
       }
-      
-      const deleteRoleUseCase = new DeleteRoleUseCase(roleRepository);
-      const result = await deleteRoleUseCase.execute(id);
-      return success(c, result);
-    } catch (err) {
-      return error(c, err instanceof Error ? err.message : 'Failed to delete role');
+    },
+
+    async update(c: Context) {
+      try {
+        const id = getNumericParamId(c);
+        const body = await c.req.json();
+        
+        // Validate request body using Zod
+        const validatedData = UpdateRoleSchema.parse(body);
+        
+        const role = await updateRoleUseCase(id, validatedData, roleRepository);
+        return success(c, role);
+      } catch (err) {
+        return handleError(c, err, "updating role");
+      }
+    },
+
+    async delete(c: Context) {
+      try {
+        const id = getNumericParamId(c);
+        const result = await deleteRoleUseCase(id, roleRepository);
+        return success(c, result);
+      } catch (err) {
+        return handleError(c, err, "deleting role");
+      }
     }
-  }
+  };
 }

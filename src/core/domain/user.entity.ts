@@ -1,92 +1,41 @@
-// Domain Entity - Business Rules
-export interface User {
+import { CreateUserSchema, UpdateUserSchema } from "../../lib/validation/user.validation.js";
+import type { CreateUserData, UpdateUserData } from "../../lib/validation/user.validation.js";
+
+// Domain Entity - Business Rules (Functional approach with Zod validation)
+export type User = {
   id: string;
   email: string;
   name: string;
   password: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface CreateUserData {
-  email: string;
-  name: string;
-  password: string;
-  roleIds?: number[];
-}
+// Re-export validation types
+export type { CreateUserData, UpdateUserData };
 
-export interface UpdateUserData {
-  email?: string;
-  name?: string;
-  password?: string;
-  roleIds?: number[];
-}
-
-// Validation methods
-
-// Domain validation rules
-export class UserEntity {
-  constructor(
-    public readonly id: string,
-    public readonly email: string,
-    public readonly name: string,
-    public readonly password: string,
-    public readonly createdAt: Date,
-    public readonly updatedAt: Date
-  ) {
-    this.validateEmail(email);
-    this.validateName(name);
-  }
+// Factory function to create a new User entity with validation
+export function createUser(data: CreateUserData): Pick<User, "email" | "name" | "password"> {
+  // Validate using Zod schema
+  const validatedData = CreateUserSchema.parse(data);
   
-  // Validation methods
-  private validateEmail(email: string): void {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      throw new Error("Invalid email format");
-    }
-  }
+  return {
+    email: validatedData.email,
+    name: validatedData.name,
+    password: validatedData.password,
+  };
+}
 
-  private validateName(name: string): void {
-    if (!name || name.trim().length < 2) {
-      throw new Error("Name must be at least 2 characters long");
-    }
-  }
-
-  // Fact
-  // ory method to create a new User entity
-  static create(
-    data: CreateUserData
-  ): Pick<User, "email" | "name" | "password"> {
-    const entity = new UserEntity(
-      "",
-      data.email,
-      data.name,
-      data.password,
-      new Date(),
-      new Date()
-    );
-    return {
-      email: entity.email,
-      name: entity.name,
-      password: entity.password,
-    };
-  }
-
-  // Method to update user details
-  update(data: UpdateUserData): User {
-    if (data.email) {
-      this.validateEmail(data.email);
-    }
-    if (data.name) {
-      this.validateName(data.name);
-    }
-    return new UserEntity(
-      this.id,
-      data.email ?? this.email,
-      data.name ?? this.name,
-      data.password ?? this.password,
-      this.createdAt,
-      new Date()
-    );
-  }
+// Function to update user details with validation
+export function updateUser(currentUser: User, data: UpdateUserData): User {
+  // Validate using Zod schema
+  const validatedData = UpdateUserSchema.parse(data);
+  
+  return {
+    ...currentUser,
+    email: validatedData.email ?? currentUser.email,
+    name: validatedData.name ?? currentUser.name,
+    password: validatedData.password ?? currentUser.password,
+    updatedAt: new Date(),
+  };
 }
