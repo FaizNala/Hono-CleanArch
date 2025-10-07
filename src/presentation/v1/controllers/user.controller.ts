@@ -26,7 +26,7 @@ export class UserController {
     this.createUserUseCase = new CreateUserUseCase(userRepository, roleRepository, userRoleRepository);
     this.getUserByIdUseCase = new GetUserByIdUseCase(userRepository);
     this.getAllUsersUseCase = new GetAllUsersUseCase(userRepository);
-    this.updateUserUseCase = new UpdateUserUseCase(userRepository);
+    this.updateUserUseCase = new UpdateUserUseCase(userRepository, roleRepository, userRoleRepository);
     this.deleteUserUseCase = new DeleteUserUseCase(userRepository);
   }
 
@@ -71,7 +71,7 @@ export class UserController {
       if (!email || !name || !password) {
         return error(c, 'Email, name, and password are required', STATUS.BAD_REQUEST);
       }
-      const user = await this.createUserUseCase.execute({ email, name, password, roleIds });
+      const user = await this.createUserUseCase.execute(body);
       return success(c, user, STATUS.CREATED);
     } catch (err) {
       console.error('Error creating user:', err);
@@ -95,11 +95,19 @@ export class UserController {
       return success(c, updated);
     } catch (err) {
       console.error('Error updating user:', err);
-      if (err instanceof Error && err.message === 'User not found') {
-        return error(c, 'User not found', STATUS.NOT_FOUND);
-      }
-      if (err instanceof Error && err.message === 'No update data provided') {
-        return error(c, err.message, STATUS.BAD_REQUEST);
+      if (err instanceof Error) {
+        if (err.message === 'User not found') {
+          return error(c, 'User not found', STATUS.NOT_FOUND);
+        }
+        if (err.message === 'No update data provided') {
+          return error(c, err.message, STATUS.BAD_REQUEST);
+        }
+        if (err.message.includes('Role with ID') && err.message.includes('not found')) {
+          return error(c, err.message, STATUS.BAD_REQUEST);
+        }
+        if (err.message.includes('Invalid') || err.message.includes('must be')) {
+          return error(c, err.message, STATUS.BAD_REQUEST);
+        }
       }
       return error(c, 'Internal server error', STATUS.SERVER_ERROR);
     }

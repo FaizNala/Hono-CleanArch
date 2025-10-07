@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { UserController } from '../controllers/user.controller.js';
-import { DrizzleUserRepository } from '../../../infrastructure/repositories/user.drizzle.repository.js';
-import { DrizzleRoleRepository } from '../../../infrastructure/repositories/role.drizzle.repository.js';
-import { DrizzleUserRoleRepository } from '../../../infrastructure/repositories/userRole.drizzle.repository.js';
+import { DrizzleUserRepository } from '../../../infrastructure/repositories/drizzle.user.repository.js';
+import { DrizzleRoleRepository } from '../../../infrastructure/repositories/drizzle.role.repository.js';
+import { DrizzleUserRoleRepository } from '../../../infrastructure/repositories/drizzle.userRole.repository.js';
 
 // Create router
 const userRoutes = new Hono();

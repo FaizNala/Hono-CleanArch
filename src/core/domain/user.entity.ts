@@ -19,6 +19,7 @@ export interface UpdateUserData {
   email?: string;
   name?: string;
   password?: string;
+  roleIds?: number[];
 }
 
 // Validation methods
