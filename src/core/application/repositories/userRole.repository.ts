@@ -1,4 +1,4 @@
-import type { UserRole, CreateUserRoleData } from '../../domain/user-role.entity.js';
+import type { UserRole, CreateUserRoleData } from '../../domain/userRole.entity.js';
 
 // Repository Interface - Contract for data access
 export interface UserRoleRepository {

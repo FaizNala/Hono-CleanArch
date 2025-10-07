@@ -6,7 +6,7 @@ import { UpdateUserUseCase } from "../../../core/application/use-cases/user/upda
 import { DeleteUserUseCase } from "../../../core/application/use-cases/user/delete.usecase.js";
 import type { UserRepository } from "../../../core/application/repositories/user.repository.js";
 import type { RoleRepository } from "../../../core/application/repositories/role.repository.js";
-import type { UserRoleRepository } from "../../../core/application/repositories/user-role.repository.js";
+import type { UserRoleRepository } from "../../../core/application/repositories/userRole.repository.js";
 import { success, error, STATUS } from "../../../utils/response";
 
 export class UserController {
@@ -32,7 +32,16 @@ export class UserController {
 
   async getAllUsers(c: Context) {
     try {
-      const users = await this.getAllUsersUseCase.execute();
+      // Parse query parameters
+      const preload = c.req.query("preload") === "true";
+      const roleIdsParam = c.req.query("roleIds");
+      const roleIds = roleIdsParam ? roleIdsParam.split(",").map(Number) : undefined;
+
+      // Create filter object
+      const filter = { preload, roleIds };
+
+      // Execute use case with filter
+      const users = await this.getAllUsersUseCase.execute(filter);
       return success(c, users);
     } catch (err) {
       console.error("Error getting all users:", err);
@@ -43,13 +52,8 @@ export class UserController {
   async getUserById(c: Context) {
     try {
       const id = c.req.param("id");
-      const preload = c.req.query("preload") === "true";
       let user;
-      if (preload) {
-        user = await this.userRepository.findByIdWithRoles(id);
-      } else {
-        user = await this.getUserByIdUseCase.execute(id);
-      }
+      user = await this.getUserByIdUseCase.execute(id);
       if (!user) {
         return error(c, "User not found", STATUS.NOT_FOUND);
       }

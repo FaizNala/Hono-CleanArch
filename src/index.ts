@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { routes } from './presentation/v1/routes/routes.js';
 import * as dotenv from 'dotenv';
+import http from 'http';
 
 // Load environment variables
 dotenv.config();
@@ -48,12 +49,26 @@ app.notFound((c) => {
   }, 404);
 });
 
-const port = Number(process.env.PORT) || 3000;
 
-serve({
-  fetch: app.fetch,
-  port,
-}, (info) => {
-  console.log(`🚀 Server is running on http://localhost:${info.port}`);
-  console.log(`📚 API Documentation: http://localhost:${info.port}/api/v1`);
+function getAvailablePort(startPort: number, callback: (port: number) => void) {
+  const server = http.createServer();
+  server.listen(startPort, () => {
+    server.close(() => callback(startPort));
+  });
+  server.on('error', () => {
+    getAvailablePort(startPort + 1, callback);
+  });
+}
+
+const envPort = Number(process.env.PORT);
+const defaultPort = envPort || 3000;
+
+getAvailablePort(defaultPort, (port) => {
+  serve({
+    fetch: app.fetch,
+    port,
+  }, (info) => {
+    console.log(`🚀 Server is running on http://localhost:${info.port}`);
+    console.log(`📚 API Documentation: http://localhost:${info.port}/api/v1`);
+  });
 });

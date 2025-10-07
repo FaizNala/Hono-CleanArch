@@ -4,7 +4,7 @@ import { GetAllRolesUseCase } from '../../../core/application/use-cases/role/get
 import { GetRoleByIdUseCase } from '../../../core/application/use-cases/role/getById.usecase.js';
 import { UpdateRoleUseCase } from '../../../core/application/use-cases/role/update.usecase.js';
 import { DeleteRoleUseCase } from '../../../core/application/use-cases/role/delete.usecase.js';
-import { DrizzleRoleRepository } from '../../../infrastructure/repositories/drizzle-role.repository.js';
+import { DrizzleRoleRepository } from '../../../infrastructure/repositories/role.drizzle.repository.js';
 import { success, error, STATUS } from '../../../utils/response.js';
 
 const roleRepository = new DrizzleRoleRepository();

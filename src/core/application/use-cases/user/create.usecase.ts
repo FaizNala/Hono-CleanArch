@@ -1,9 +1,9 @@
 import type { UserRepository } from '../../repositories/user.repository.js';
 import type { RoleRepository } from '../../repositories/role.repository.js';
-import type { UserRoleRepository } from '../../repositories/user-role.repository.js';
+import type { UserRoleRepository } from '../../repositories/userRole.repository.js';
 import type { CreateUserData } from '../../../domain/user.entity.js';
 import { UserEntity } from '../../../domain/user.entity.js';
-import { UserRoleEntity } from '../../../domain/user-role.entity.js';
+import { UserRoleEntity } from '../../../domain/userRole.entity.js';
 import * as bcrypt from 'bcrypt';
 
 export class CreateUserUseCase {
