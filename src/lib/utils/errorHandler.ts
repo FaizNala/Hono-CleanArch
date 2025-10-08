@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import { error, STATUS } from "./response.js";
+import { error, StatusCode } from "./response.js";
 
 /**
  * Global error handler untuk semua controllers
@@ -9,19 +9,39 @@ export function handleError(c: Context, err: unknown, operation: string) {
   console.error(`Error ${operation}:`, err);
   
   if (!(err instanceof Error)) {
-    return error(c, "Internal server error", STATUS.SERVER_ERROR);
+    return error(c, "Internal server error", StatusCode.SERVER_ERROR);
   }
 
   const message = err.message.toLowerCase();
 
   // Not Found errors
   if (message.includes("not found")) {
-    return error(c, err.message, STATUS.NOT_FOUND);
+    return error(c, err.message, StatusCode.NOT_FOUND);
   }
 
   // Conflict errors (already exists)
   if (message.includes("already exists")) {
-    return error(c, err.message, STATUS.CONFLICT);
+    return error(c, err.message, StatusCode.CONFLICT);
+  }
+
+  // Unauthorized errors
+  if (message.includes("unauthorized") || message.includes("not authorized")) {
+    return error(c, err.message, StatusCode.UNAUTHORIZED);
+  }
+
+  // Forbidden errors
+  if (message.includes("forbidden") || message.includes("not allowed") || message.includes("permission denied")) {
+    return error(c, err.message, StatusCode.FORBIDDEN);
+  }
+
+  // Timeout errors
+  if (message.includes("timeout") || message.includes("timed out")) {
+    return error(c, err.message, StatusCode.SERVER_ERROR);
+  }
+
+  // Database errors
+  if (message.includes("database") || message.includes("db error") || message.includes("sql")) {
+    return error(c, "Database error: " + err.message, StatusCode.SERVER_ERROR);
   }
 
   // Validation errors
@@ -32,47 +52,14 @@ export function handleError(c: Context, err: unknown, operation: string) {
     message.includes("validation") ||
     message.includes("no update data provided")
   ) {
-    return error(c, err.message, STATUS.BAD_REQUEST);
+    return error(c, err.message, StatusCode.BAD_REQUEST);
   }
 
   // Zod validation errors
   if (err.name === "ZodError") {
-    return error(c, "Validation failed: " + err.message, STATUS.BAD_REQUEST);
+    return error(c, "Validation failed: " + err.message, StatusCode.BAD_REQUEST);
   }
 
   // Default server error
-  return error(c, "Internal server error", STATUS.SERVER_ERROR);
-}
-
-/**
- * Helper untuk parsing query parameters
- */
-export function parseQueryParams(c: Context) {
-  const preload = c.req.query("preload") === "true";
-  const roleIdsParam = c.req.query("roleIds");
-  const roleIds = roleIdsParam ? roleIdsParam.split(",").map(Number) : undefined;
-  
-  return { preload, roleIds };
-}
-
-/**
- * Helper untuk mendapatkan ID parameter dan memvalidasinya
- */
-export function getParamId(c: Context, paramName: string = "id"): string {
-  const id = c.req.param(paramName);
-  if (!id) {
-    throw new Error(`${paramName} parameter is required`);
-  }
-  return id;
-}
-
-/**
- * Helper untuk mendapatkan numeric ID parameter
- */
-export function getNumericParamId(c: Context, paramName: string = "id"): number {
-  const id = parseInt(c.req.param(paramName));
-  if (isNaN(id)) {
-    throw new Error(`Invalid ${paramName} format`);
-  }
-  return id;
+  return error(c, "Internal server error", StatusCode.SERVER_ERROR);
 }

@@ -5,8 +5,9 @@ import { getRoleByIdUseCase } from '../../../core/application/use-cases/role/get
 import { updateRoleUseCase } from '../../../core/application/use-cases/role/update.usecase.js';
 import { deleteRoleUseCase } from '../../../core/application/use-cases/role/delete.usecase.js';
 import type { RoleRepository } from '../../../core/application/repositories/role.repository.js';
-import { success, STATUS } from '../../../lib/utils/response.js';
-import { handleError, getNumericParamId } from '../../../lib/utils/errorHandler.js';
+import { success } from '../../../lib/utils/response.js';
+import { handleError } from '../../../lib/utils/errorHandler.js';
+import { getNumericParamId } from '../../../lib/utils/requestHelper.js';
 import { CreateRoleSchema, UpdateRoleSchema } from '../../../lib/validation/role.validation.js';
 
 export function RoleController(roleRepository: RoleRepository) {
@@ -19,7 +20,7 @@ export function RoleController(roleRepository: RoleRepository) {
         const validatedData = CreateRoleSchema.parse(body);
         
         const role = await createRoleUseCase(validatedData, roleRepository);
-        return success(c, role, STATUS.CREATED);
+        return success(c, role);
       } catch (err) {
         return handleError(c, err, "creating role");
       }

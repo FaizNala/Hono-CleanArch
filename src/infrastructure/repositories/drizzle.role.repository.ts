@@ -28,7 +28,7 @@ export class DrizzleRoleRepository implements RoleRepository {
   async update(id: number, roleData: UpdateRoleData): Promise<Role | null> {
     const result = await db
       .update(roles)
-      .set(roleData)
+      .set({ ...roleData, updatedAt: new Date() })
       .where(eq(roles.id, id))
       .returning();
     return result[0] || null;

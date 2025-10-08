@@ -1,32 +1,28 @@
-import { CreateRoleSchema, UpdateRoleSchema } from "../../lib/validation/role.validation.js";
-import type { CreateRoleData, UpdateRoleData } from "../../lib/validation/role.validation.js";
-
-// Domain Entity - Business Rules (Functional approach with Zod validation)
+// Domain Entity - Business Rules (Functional approach, tanpa validasi Zod)
 export type Role = {
   id: number;
   name: string;
 };
 
-// Re-export validation types
-export type { CreateRoleData, UpdateRoleData };
+export type CreateRoleData = {
+  name: string;
+};
 
-// Factory function to create a new Role entity with validation
+export type UpdateRoleData = {
+  name?: string;
+};
+
+// Factory function to create a new Role entity (data sudah pasti valid dari controller)
 export function createRole(data: CreateRoleData): Pick<Role, "name"> {
-  // Validate using Zod schema
-  const validatedData = CreateRoleSchema.parse(data);
-  
   return {
-    name: validatedData.name,
+    name: data.name,
   };
 }
 
-// Function to update role details with validation
+// Function to update role details (data sudah pasti valid dari controller)
 export function updateRole(currentRole: Role, data: UpdateRoleData): Role {
-  // Validate using Zod schema
-  const validatedData = UpdateRoleSchema.parse(data);
-  
   return {
     ...currentRole,
-    name: validatedData.name ?? currentRole.name,
+    name: data.name ?? currentRole.name,
   };
 }

@@ -1,41 +1,40 @@
-import { CreateUserSchema, UpdateUserSchema } from "../../lib/validation/user.validation.js";
-import type { CreateUserData, UpdateUserData } from "../../lib/validation/user.validation.js";
-
-// Domain Entity - Business Rules (Functional approach with Zod validation)
+// Domain Entity - Business Rules (Functional approach, tanpa validasi Zod)
 export type User = {
   id: string;
   email: string;
   name: string;
   password: string;
-  createdAt: Date;
-  updatedAt: Date;
 };
 
-// Re-export validation types
-export type { CreateUserData, UpdateUserData };
+export type CreateUserData = {
+  email: string;
+  name: string;
+  password: string;
+  roleIds?: number[];
+};
 
-// Factory function to create a new User entity with validation
+export type UpdateUserData = {
+  email?: string;
+  name?: string;
+  password?: string;
+  roleIds?: number[];
+};
+
+// Factory function to create a new User entity (data sudah pasti valid dari controller)
 export function createUser(data: CreateUserData): Pick<User, "email" | "name" | "password"> {
-  // Validate using Zod schema
-  const validatedData = CreateUserSchema.parse(data);
-  
   return {
-    email: validatedData.email,
-    name: validatedData.name,
-    password: validatedData.password,
+    email: data.email,
+    name: data.name,
+    password: data.password,
   };
 }
 
-// Function to update user details with validation
+// Function to update user details (data sudah pasti valid dari controller)
 export function updateUser(currentUser: User, data: UpdateUserData): User {
-  // Validate using Zod schema
-  const validatedData = UpdateUserSchema.parse(data);
-  
   return {
     ...currentUser,
-    email: validatedData.email ?? currentUser.email,
-    name: validatedData.name ?? currentUser.name,
-    password: validatedData.password ?? currentUser.password,
-    updatedAt: new Date(),
+    email: data.email ?? currentUser.email,
+    name: data.name ?? currentUser.name,
+    password: data.password ?? currentUser.password,
   };
 }

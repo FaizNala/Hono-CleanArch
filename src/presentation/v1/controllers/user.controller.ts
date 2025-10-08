@@ -4,8 +4,9 @@ import { getUserByIdUseCase } from "../../../core/application/use-cases/user/get
 import { getAllUsersUseCase } from "../../../core/application/use-cases/user/getAll.usecase.js";
 import { updateUserUseCase } from "../../../core/application/use-cases/user/update.usecase.js";
 import { deleteUserUseCase } from "../../../core/application/use-cases/user/delete.usecase.js";
-import { success, STATUS } from "../../../lib/utils/response.js";
-import { handleError, parseQueryParams, getParamId } from "../../../lib/utils/errorHandler.js";
+import { success } from "../../../lib/utils/response.js";
+import { handleError } from "../../../lib/utils/errorHandler.js";
+import { parseQueryParams, getParamId } from "../../../lib/utils/requestHelper.js";
 import { CreateUserSchema, UpdateUserSchema } from "../../../lib/validation/user.validation.js";
 import type { Repositories } from "../../../lib/types/repositories.js";
 
@@ -39,7 +40,7 @@ export function UserController(repositories: Repositories) {
         const validatedData = CreateUserSchema.parse(body);
         
         const user = await createUserUseCase(validatedData, repositories);
-        return success(c, user, STATUS.CREATED);
+        return success(c, user);
       } catch (err) {
         return handleError(c, err, "creating user");
       }

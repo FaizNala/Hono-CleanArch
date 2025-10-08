@@ -1,6 +1,5 @@
-export const STATUS = {
+export const StatusCode = {
   OK: 200,
-  CREATED: 201,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
@@ -9,10 +8,10 @@ export const STATUS = {
   SERVER_ERROR: 500,
 };
 
-export function success(c: any, data: any, status = STATUS.OK) {
+export function success(c: any, data: any, status = StatusCode.OK) {
   return c.json({ success: true, data }, status);
 }
 
-export function error(c: any, message: string, status = STATUS.SERVER_ERROR) {
+export function error(c: any, message: string, status = StatusCode.SERVER_ERROR) {
   return c.json({ success: false, error: message }, status);
 }
