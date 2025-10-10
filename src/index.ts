@@ -2,7 +2,7 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { routes } from './presentation/v1/routes/routes.js';
+import { routes } from './presentation/routes/routes.js';
 import * as dotenv from 'dotenv';
 
 // Load environment variables

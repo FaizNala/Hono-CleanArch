@@ -9,10 +9,30 @@ import { success } from '../../../lib/utils/response.js';
 import { handleError } from '../../../lib/utils/errorHandler.js';
 import { getNumericParamId } from '../../../lib/utils/requestHelper.js';
 import { CreateRoleSchema, UpdateRoleSchema } from '../../../lib/validation/role.validation.js';
+import { toRoleResponse } from '../mappers/role.mapper.js'; 
 
 export function RoleController(roleRepository: RoleRepository) {
   return {
-    async create(c: Context) {
+    async getAllRoles(c: Context) {
+      try {
+        const roles = await getAllRolesUseCase(roleRepository);
+        return success(c, roles.map(toRoleResponse));
+      } catch (err) {
+        return handleError(c, err, "getting all roles");
+      }
+    },
+
+    async getByRoleId(c: Context) {
+      try {
+        const id = getNumericParamId(c);
+        const role = await getRoleByIdUseCase(id, roleRepository);
+        return success(c, toRoleResponse(role));
+      } catch (err) {
+        return handleError(c, err, "getting role by ID");
+      }
+    },
+
+    async createRole(c: Context) {
       try {
         const body = await c.req.json();
         
@@ -20,32 +40,14 @@ export function RoleController(roleRepository: RoleRepository) {
         const validatedData = CreateRoleSchema.parse(body);
         
         const role = await createRoleUseCase(validatedData, roleRepository);
-        return success(c, role);
+        return success(c, toRoleResponse(role));
       } catch (err) {
         return handleError(c, err, "creating role");
       }
     },
 
-    async getAll(c: Context) {
-      try {
-        const roles = await getAllRolesUseCase(roleRepository);
-        return success(c, roles);
-      } catch (err) {
-        return handleError(c, err, "getting all roles");
-      }
-    },
 
-    async getById(c: Context) {
-      try {
-        const id = getNumericParamId(c);
-        const role = await getRoleByIdUseCase(id, roleRepository);
-        return success(c, role);
-      } catch (err) {
-        return handleError(c, err, "getting role by ID");
-      }
-    },
-
-    async update(c: Context) {
+    async updateRole(c: Context) {
       try {
         const id = getNumericParamId(c);
         const body = await c.req.json();
@@ -54,17 +56,17 @@ export function RoleController(roleRepository: RoleRepository) {
         const validatedData = UpdateRoleSchema.parse(body);
         
         const role = await updateRoleUseCase(id, validatedData, roleRepository);
-        return success(c, role);
+        return success(c, toRoleResponse(role));
       } catch (err) {
         return handleError(c, err, "updating role");
       }
     },
 
-    async delete(c: Context) {
+    async deleteRole(c: Context) {
       try {
         const id = getNumericParamId(c);
-        const result = await deleteRoleUseCase(id, roleRepository);
-        return success(c, result);
+        await deleteRoleUseCase(id, roleRepository);
+        return success(c, { message: "Role deleted successfully" });
       } catch (err) {
         return handleError(c, err, "deleting role");
       }

@@ -17,50 +17,45 @@ export class DrizzleUserRepository implements UserRepository {
       with: {
         userRoles: {
           with: {
-            role: true
-          }
-        }
-      }
+            role: true,
+          },
+        },
+      },
     });
-    if (!result[0]) return null;
-    const { userRoles, ...userData } = result[0];
-    return {
-      ...userData,
-      roles: userRoles.map(ur => ur.role)
-    };
+    return result[0];
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    const result = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
-    return result[0] || null;
-  }
-
-async withPreload(): Promise<any[]> {
-    const result = await db.query.users.findMany({
+  async withPreload(): Promise<any[]> {
+    return await db.query.users.findMany({
       with: {
         userRoles: {
           with: {
-            role: true
-          }
-        }
-      }
+            role: true,
+          },
+        },
+      },
     });
-    
-    // Mapping hasil query: hapus userRoles, tambahkan roles sebagai array
-    return result.map(u => {
-      const { userRoles, ...userData } = u;
-      return {
-        ...userData,
-        roles: userRoles.map(ur => ur.role)
-      };
-    });
-}
+  }
 
-  // --- CUD Operations ---
+  async withPreloadWhere(whereClause: any): Promise<User[]> {
+    const result = await db.query.users.findMany({
+      where: whereClause,
+      with: {
+        userRoles: {
+          with: {
+            role: true,
+          },
+        },
+      },
+    });
+    return result;
+  }
+
+  async withWhere(whereClause: any): Promise<User[]> {
+    return await db.select().from(users).where(whereClause);
+  }
+
+  // --- CRUD Operations ---
   async create(userData: CreateUserData): Promise<User> {
     const result = await db.insert(users).values(userData).returning();
     return result[0];
@@ -76,7 +71,7 @@ async withPreload(): Promise<any[]> {
       .where(eq(users.id, id))
       .returning();
 
-    return result[0] || null;
+    return result[0];
   }
 
   async delete(id: string): Promise<boolean> {

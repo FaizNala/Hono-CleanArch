@@ -1,8 +1,5 @@
 import type { UserRoleRepository } from "../../core/application/repositories/userRole.repository.js";
-import type {
-  UserRole,
-  CreateUserRoleData,
-} from "../../core/domain/userRole.entity.js";
+import type { UserRole, CreateUserRoleData } from "../../core/domain/userRole.entity.js";
 import { db } from "../database/index.js";
 import { userRoles } from "../database/schema.js";
 import { eq, and } from "drizzle-orm";

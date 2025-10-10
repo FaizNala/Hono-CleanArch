@@ -8,12 +8,12 @@ import { eq } from 'drizzle-orm';
 export class DrizzleRoleRepository implements RoleRepository {
   async findById(id: number): Promise<Role | null> {
     const result = await db.select().from(roles).where(eq(roles.id, id));
-    return result[0] || null;
+    return result[0];
   }
 
   async findByName(name: string): Promise<Role | null> {
     const result = await db.select().from(roles).where(eq(roles.name, name));
-    return result[0] || null;
+    return result[0];
   }
 
   async findAll(): Promise<Role[]> {
@@ -31,7 +31,7 @@ export class DrizzleRoleRepository implements RoleRepository {
       .set({ ...roleData, updatedAt: new Date() })
       .where(eq(roles.id, id))
       .returning();
-    return result[0] || null;
+    return result[0];
   }
 
   async delete(id: number): Promise<boolean> {

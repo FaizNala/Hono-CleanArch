@@ -9,6 +9,7 @@ import { handleError } from "../../../lib/utils/errorHandler.js";
 import { parseQueryParams, getParamId } from "../../../lib/utils/requestHelper.js";
 import { CreateUserSchema, UpdateUserSchema } from "../../../lib/validation/user.validation.js";
 import type { Repositories } from "../../../lib/types/repositories.js";
+import { toUserResponse } from "../mappers/user.mapper.js";
 
 export function UserController(repositories: Repositories) {
   return {
@@ -16,7 +17,7 @@ export function UserController(repositories: Repositories) {
       try {
         const filter = parseQueryParams(c);
         const users = await getAllUsersUseCase(filter, repositories.user);
-        return success(c, users);
+        return success(c, users.map(toUserResponse));
       } catch (err) {
         return handleError(c, err, "getting all users");
       }
@@ -26,7 +27,7 @@ export function UserController(repositories: Repositories) {
       try {
         const id = getParamId(c);
         const user = await getUserByIdUseCase(id, repositories.user);
-        return success(c, user);
+        return success(c, toUserResponse(user));
       } catch (err) {
         return handleError(c, err, "getting user by ID");
       }
@@ -40,7 +41,7 @@ export function UserController(repositories: Repositories) {
         const validatedData = CreateUserSchema.parse(body);
         
         const user = await createUserUseCase(validatedData, repositories);
-        return success(c, user);
+        return success(c, toUserResponse(user));
       } catch (err) {
         return handleError(c, err, "creating user");
       }
@@ -55,7 +56,7 @@ export function UserController(repositories: Repositories) {
         const validatedData = UpdateUserSchema.parse(body);
         
         const updated = await updateUserUseCase(id, validatedData, repositories);
-        return success(c, updated);
+        return success(c, toUserResponse(updated));
       } catch (err) {
         return handleError(c, err, "updating user");
       }
@@ -65,7 +66,7 @@ export function UserController(repositories: Repositories) {
       try {
         const id = getParamId(c);
         await deleteUserUseCase(id, repositories.user);
-        return success(c, { message: "User deleted" });
+        return success(c, { message: "User deleted successfully" });
       } catch (err) {
         return handleError(c, err, "deleting user");
       }

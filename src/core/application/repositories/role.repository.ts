@@ -1,5 +1,5 @@
 import type { Role } from '../../domain/role.entity.js';
-import type { CreateRoleData, UpdateRoleData } from '../../../lib/validation/role.validation.js';
+import type { CreateRoleData, UpdateRoleData } from '../../domain/role.entity.js';
 
 // Repository Type - Contract for data access (Functional approach)
 export type RoleRepository = {

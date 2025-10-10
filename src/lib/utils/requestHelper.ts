@@ -6,8 +6,10 @@ export function parseQueryParams(c: Context) {
   const preload = c.req.query("preload") === "true";
   const roleIdsParam = c.req.query("roleIds");
   const roleIds = roleIdsParam ? roleIdsParam.split(",").map(Number) : undefined;
-  
-  return { preload, roleIds };
+  const name = c.req.query("name");
+  const email = c.req.query("email");
+
+  return { preload, roleIds, name, email };
 }
 
 /**
