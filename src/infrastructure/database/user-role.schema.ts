@@ -1,4 +1,4 @@
-import { uuid, integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { uuid, integer, pgTable, primaryKey, index } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { users } from './user.schema';
 import { roles } from './role.schema';
@@ -9,8 +9,10 @@ export const userRoles = pgTable(
     userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
     roleId: integer('role_id').notNull().references(() => roles.id, { onDelete: 'cascade' }),
   },
-  (t) => [
-    primaryKey({ columns: [t.userId, t.roleId] }),
+  (table) => [
+    primaryKey({ columns: [table.userId, table.roleId] }),
+    index('user_roles_user_id_idx').on(table.userId),
+    index('user_roles_role_id_idx').on(table.roleId),
   ],
 );
 
