@@ -1,4 +1,3 @@
-import type { RoleRepository } from '../../repositories/role.repository.js';
 import type { UpdateRoleData } from '../../../../lib/validation/role.validation.js';
 import type { Repositories } from '../../../../lib/types/repositories.js';
 import { updateRole } from '../../../domain/role.entity.js';

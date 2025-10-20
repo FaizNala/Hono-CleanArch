@@ -1,10 +1,23 @@
-// src/presentation/mappers/auth.mapper.ts
-import type {
-  AuthResponse,
-  RegisterResponse,
-} from "../../../core/domain/auth.entity.js";
+export type LoginResponseDto = {
+  token: string;
+  user: {
+    id: number;
+    email: string;
+    name: string;
+    roles?: Array<{ id: number; name: string }>;
+    permissions?: Array<{ id: number; name: string }>;
+  };
+};
 
-export function toAuthResponse(user: any, token: string): AuthResponse {
+export type RegisterResponseDto = {
+  id: number;
+  email: string;
+  name: string;
+  roles?: Array<{ id: number; name: string }>;
+  permissions?: Array<{ id: number; name: string }>;
+};
+
+export function toLoginResponse(user: any, token: string): LoginResponseDto {
   return {
     token,
     user: {
@@ -36,7 +49,7 @@ export function toAuthResponse(user: any, token: string): AuthResponse {
   };
 }
 
-export function toRegisterResponse(user: any): RegisterResponse {
+export function toRegisterResponse(user: any): RegisterResponseDto {
   return {
     id: user.id,
     email: user.email,

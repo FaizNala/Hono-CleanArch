@@ -1,23 +1,4 @@
 // Domain Entity - Auth Business Rules
-export type AuthResponse = {
-  token: string;
-  user: {
-    id: number;
-    email: string;
-    name: string;
-    roles?: Array<{ id: number; name: string }>;
-    permissions?: Array<{ id: number; name: string }>;
-  };
-};
-
-export type RegisterResponse = {
-  id: number;
-  email: string;
-  name: string;
-  roles?: Array<{ id: number; name: string }>;
-  permissions?: Array<{ id: number; name: string }>;
-};
-
 export type LoginData = {
   email: string;
   password: string;

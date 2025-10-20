@@ -5,7 +5,7 @@ import type { Repositories } from '../../../lib/types/repositories.js';
 import { success } from '../../../lib/utils/response.js';
 import { handleError } from '../../../lib/utils/errorHandler.js';
 import { LoginSchema, RegisterSchema } from '../../../lib/validation/auth.validation.js';
-import { toAuthResponse, toRegisterResponse } from '../mappers/auth.mapper.js';
+import { toLoginResponse, toRegisterResponse } from '../mappers/auth.mapper.js';
 
 export function AuthController(repositories: Repositories) {
   return {
@@ -17,7 +17,7 @@ export function AuthController(repositories: Repositories) {
         const validatedData = LoginSchema.parse(body);
         
         const authResponse = await loginUseCase(validatedData, repositories.user);
-        return success(c, toAuthResponse(authResponse.user, authResponse.token));
+        return success(c, toLoginResponse(authResponse.user, authResponse.token));
       } catch (err) {
         return handleError(c, err, "login");
       }
