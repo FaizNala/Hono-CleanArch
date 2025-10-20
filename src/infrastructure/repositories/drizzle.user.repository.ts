@@ -17,7 +17,15 @@ export class DrizzleUserRepository implements UserRepository {
       with: {
         userRoles: {
           with: {
-            role: true,
+            role: {
+              with: {
+                rolePermissions: {
+                  with: {
+                    permission: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -43,7 +51,15 @@ export class DrizzleUserRepository implements UserRepository {
       with: {
         userRoles: {
           with: {
-            role: true,
+            role: {
+              with: {
+                rolePermissions: {
+                  with: {
+                    permission: true,
+                  },
+                },
+              },
+            },
           },
         },
       },

@@ -11,9 +11,30 @@ export class DrizzleRoleRepository implements RoleRepository {
     return await db.select().from(roles);
   }
 
-  async findById(id: number): Promise<Role | null> {
-    const result = await db.select().from(roles).where(eq(roles.id, id));
-    return result[0];
+  async findById(id: number): Promise<any | null> {
+    const result = await db.query.roles.findMany({
+      where: eq(roles.id, id),
+      with: {
+        rolePermissions: {
+          with: {
+            permission: true,
+          },
+        },
+      },
+    });
+    return result[0] || null;
+  }
+
+  async withPreload(): Promise<any[]> {
+    return await db.query.roles.findMany({
+      with: {
+        rolePermissions: {
+          with: {
+            permission: true,
+          },
+        },
+      },
+    });
   }
 
   // --- CRUD Operations ---

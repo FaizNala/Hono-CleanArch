@@ -4,18 +4,18 @@ import { getAllRolesUseCase } from '../../../core/application/use-cases/role/get
 import { getRoleByIdUseCase } from '../../../core/application/use-cases/role/getById.usecase.js';
 import { updateRoleUseCase } from '../../../core/application/use-cases/role/update.usecase.js';
 import { deleteRoleUseCase } from '../../../core/application/use-cases/role/delete.usecase.js';
-import type { RoleRepository } from '../../../core/application/repositories/role.repository.js';
+import type { Repositories } from '../../../lib/types/repositories.js';
 import { success } from '../../../lib/utils/response.js';
 import { handleError } from '../../../lib/utils/errorHandler.js';
 import { getParamId } from '../../../lib/utils/requestHelper.js';
 import { CreateRoleSchema, UpdateRoleSchema } from '../../../lib/validation/role.validation.js';
 import { toRoleResponse } from '../mappers/role.mapper.js'; 
 
-export function RoleController(roleRepository: RoleRepository) {
+export function RoleController(repositories: Repositories) {
   return {
     async getAllRoles(c: Context) {
       try {
-        const roles = await getAllRolesUseCase(roleRepository);
+        const roles = await getAllRolesUseCase(repositories.role);
         return success(c, roles.map(toRoleResponse));
       } catch (err) {
         return handleError(c, err, "getting all roles");
@@ -25,7 +25,7 @@ export function RoleController(roleRepository: RoleRepository) {
     async getByRoleId(c: Context) {
       try {
         const id = getParamId(c);
-        const role = await getRoleByIdUseCase(id, roleRepository);
+        const role = await getRoleByIdUseCase(id, repositories.role);
         return success(c, toRoleResponse(role));
       } catch (err) {
         return handleError(c, err, "getting role by ID");
@@ -39,7 +39,7 @@ export function RoleController(roleRepository: RoleRepository) {
         // Validate request body using Zod
         const validatedData = CreateRoleSchema.parse(body);
         
-        const role = await createRoleUseCase(validatedData, roleRepository);
+        const role = await createRoleUseCase(validatedData, repositories);
         return success(c, toRoleResponse(role));
       } catch (err) {
         return handleError(c, err, "creating role");
@@ -55,7 +55,7 @@ export function RoleController(roleRepository: RoleRepository) {
         // Validate request body using Zod
         const validatedData = UpdateRoleSchema.parse(body);
         
-        const role = await updateRoleUseCase(id, validatedData, roleRepository);
+        const role = await updateRoleUseCase(id, validatedData, repositories);
         return success(c, toRoleResponse(role));
       } catch (err) {
         return handleError(c, err, "updating role");
@@ -65,7 +65,7 @@ export function RoleController(roleRepository: RoleRepository) {
     async deleteRole(c: Context) {
       try {
         const id = getParamId(c);
-        await deleteRoleUseCase(id, roleRepository);
+        await deleteRoleUseCase(id, repositories.role);
         return success(c, { message: "Role deleted successfully" });
       } catch (err) {
         return handleError(c, err, "deleting role");

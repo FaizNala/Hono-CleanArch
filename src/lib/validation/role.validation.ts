@@ -9,6 +9,9 @@ export const CreateRoleSchema = z.object({
     .string()
     .min(2, "Role name must be at least 2 characters long")
     .max(100, "Role name must not exceed 100 characters"),
+  permissionIds: z
+    .array(z.number().positive("Permission ID must be positive"))
+    .optional(),
 });
 
 export const UpdateRoleSchema = z.object({
@@ -16,6 +19,9 @@ export const UpdateRoleSchema = z.object({
     .string()
     .min(2, "Role name must be at least 2 characters long")
     .max(100, "Role name must not exceed 100 characters")
+    .optional(),
+  permissionIds: z
+    .array(z.number().positive("Permission ID must be positive"))
     .optional(),
 });
 

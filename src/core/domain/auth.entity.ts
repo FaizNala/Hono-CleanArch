@@ -6,7 +6,16 @@ export type AuthResponse = {
     email: string;
     name: string;
     roles?: Array<{ id: number; name: string }>;
+    permissions?: Array<{ id: number; name: string }>;
   };
+};
+
+export type RegisterResponse = {
+  id: number;
+  email: string;
+  name: string;
+  roles?: Array<{ id: number; name: string }>;
+  permissions?: Array<{ id: number; name: string }>;
 };
 
 export type LoginData = {

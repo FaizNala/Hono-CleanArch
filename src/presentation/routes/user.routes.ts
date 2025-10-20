@@ -4,29 +4,31 @@ import { DrizzleUserRepository } from '../../infrastructure/repositories/drizzle
 import { DrizzleRoleRepository } from '../../infrastructure/repositories/drizzle.role.repository.js';
 import { DrizzleUserRoleRepository } from '../../infrastructure/repositories/drizzle.userRole.repository.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
+import { requirePermission } from '../middleware/permission.middleware.js';
 import type { Repositories } from '../../lib/types/repositories.js';
 import type { AuthVariables } from '../middleware/auth.middleware.js';
 
 // Create router with Auth Variables
 const userRoutes = new Hono<{ Variables: AuthVariables }>();
 
-// Initialize dependencies
-const repositories: Repositories = {
+// Initialize only needed repositories using Partial
+const repositories: Partial<Repositories> = {
   user: new DrizzleUserRepository(),
   role: new DrizzleRoleRepository(),
   userRole: new DrizzleUserRoleRepository(),
 };
 
-const userController = UserController(repositories);
+// Cast to full Repositories jika controller membutuhkannya
+const userController = UserController(repositories as Repositories);
 
 // Apply auth middleware to all routes
 userRoutes.use('*', authMiddleware);
 
-// Routes (all protected)
-userRoutes.get('/', (c) => userController.getAllUsers(c));
-userRoutes.get('/:id', (c) => userController.getUserById(c));
-userRoutes.post('/', (c) => userController.createUser(c));
-userRoutes.put('/:id', (c) => userController.updateUser(c));
-userRoutes.delete('/:id', (c) => userController.deleteUser(c));
+// Routes with permission-based access control
+userRoutes.get('/', requirePermission('users.view'), (c) => userController.getAllUsers(c));
+userRoutes.get('/:id', requirePermission('users.view'), (c) => userController.getUserById(c));
+userRoutes.post('/', requirePermission('users.create'), (c) => userController.createUser(c));
+userRoutes.put('/:id', requirePermission('users.update'), (c) => userController.updateUser(c));
+userRoutes.delete('/:id', requirePermission('users.delete'), (c) => userController.deleteUser(c));
 
 export { userRoutes };

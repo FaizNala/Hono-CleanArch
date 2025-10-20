@@ -8,13 +8,13 @@ import type { Repositories } from '../../lib/types/repositories.js';
 const authRoutes = new Hono();
 
 // Initialize dependencies
-const repositories: Repositories = {
+const repositories: Partial<Repositories> = {
   user: new DrizzleUserRepository(),
   role: new DrizzleRoleRepository(),
   userRole: new DrizzleUserRoleRepository(),
 };
 
-const authController = AuthController(repositories);
+const authController = AuthController(repositories as Repositories);
 
 // Auth routes (public - no middleware needed)
 authRoutes.post('/login', (c) => authController.login(c));

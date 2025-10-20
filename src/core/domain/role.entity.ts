@@ -6,10 +6,12 @@ export type Role = {
 
 export type CreateRoleData = {
   name: string;
+  permissionIds?: number[];
 };
 
 export type UpdateRoleData = {
   name?: string;
+  permissionIds?: number[];
 };
 
 // Factory function to create a new Role entity (data sudah pasti valid dari controller)

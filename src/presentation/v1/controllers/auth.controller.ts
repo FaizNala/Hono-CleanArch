@@ -5,6 +5,7 @@ import type { Repositories } from '../../../lib/types/repositories.js';
 import { success } from '../../../lib/utils/response.js';
 import { handleError } from '../../../lib/utils/errorHandler.js';
 import { LoginSchema, RegisterSchema } from '../../../lib/validation/auth.validation.js';
+import { toAuthResponse, toRegisterResponse } from '../mappers/auth.mapper.js';
 
 export function AuthController(repositories: Repositories) {
   return {
@@ -16,7 +17,7 @@ export function AuthController(repositories: Repositories) {
         const validatedData = LoginSchema.parse(body);
         
         const authResponse = await loginUseCase(validatedData, repositories.user);
-        return success(c, authResponse);
+        return success(c, toAuthResponse(authResponse.user, authResponse.token));
       } catch (err) {
         return handleError(c, err, "login");
       }
@@ -29,8 +30,8 @@ export function AuthController(repositories: Repositories) {
         // Validate request body using Zod
         const validatedData = RegisterSchema.parse(body);
         
-        const authResponse = await registerUseCase(validatedData, repositories);
-        return success(c, authResponse);
+        const registerResponse = await registerUseCase(validatedData, repositories);
+        return success(c, toRegisterResponse(registerResponse));
       } catch (err) {
         return handleError(c, err, "register");
       }
