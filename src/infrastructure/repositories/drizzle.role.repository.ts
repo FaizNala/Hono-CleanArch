@@ -6,20 +6,17 @@ import { roles } from '../database/schema.js';
 import { eq } from 'drizzle-orm';
 
 export class DrizzleRoleRepository implements RoleRepository {
+  // ---  Finder ---
+  async findAll(): Promise<Role[]> {
+    return await db.select().from(roles);
+  }
+
   async findById(id: number): Promise<Role | null> {
     const result = await db.select().from(roles).where(eq(roles.id, id));
     return result[0];
   }
 
-  async findByName(name: string): Promise<Role | null> {
-    const result = await db.select().from(roles).where(eq(roles.name, name));
-    return result[0];
-  }
-
-  async findAll(): Promise<Role[]> {
-    return await db.select().from(roles);
-  }
-
+  // --- CRUD Operations ---
   async create(roleData: CreateRoleData): Promise<Role> {
     const result = await db.insert(roles).values(roleData).returning();
     return result[0];

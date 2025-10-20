@@ -4,7 +4,7 @@ import { createUserRole } from "../../../domain/userRole.entity.js";
 import type { Repositories } from "../../../../lib/types/repositories.js";
 import * as bcrypt from "bcrypt";
 
-export async function updateUserUseCase(id: string, data: UpdateUserData, repositories: Repositories) {
+export async function updateUserUseCase(id: number, data: UpdateUserData, repositories: Repositories) {
   const existing = await repositories.user.findById(id);
   if (!existing) {
     throw new Error("User not found");
@@ -16,7 +16,7 @@ export async function updateUserUseCase(id: string, data: UpdateUserData, reposi
     password = await bcrypt.hash(data.password, 10);
   }
 
-  // Validasi dan update via domain function (dengan Zod validation)
+  // Validasi dan update via domain function
   const updatedEntity = updateUser(existing, {
     ...data,
     password: data.password ? password : undefined,

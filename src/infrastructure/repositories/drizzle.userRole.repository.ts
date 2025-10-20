@@ -10,7 +10,7 @@ export class DrizzleUserRoleRepository implements UserRoleRepository {
     return result[0];
   }
 
-  async delete(userId: string, roleId?: number): Promise<boolean> {
+  async delete(userId: number, roleId?: number): Promise<boolean> {
     if (roleId !== undefined) {
       const result = await db.delete(userRoles).where(and(eq(userRoles.userId, userId), eq(userRoles.roleId, roleId))).returning();
       return result.length > 0;

@@ -1,11 +1,11 @@
 // Domain Entity - Business Rules (Functional approach)
 export type UserRole = {
-  userId: string;
+  userId: number;
   roleId: number;
 };
 
 export type CreateUserRoleData = {
-  userId: string;
+  userId: number;
   roleId: number;
 };
 

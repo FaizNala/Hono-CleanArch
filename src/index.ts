@@ -12,8 +12,9 @@ const app = new Hono();
 
 // Middleware
 app.use('*', logger());
+const allowedOrigins = (process.env.CORS_ORIGINS || '').split(',').map(o => o.trim()).filter(o => o);
 app.use('*', cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173'], // Add your frontend URLs
+  origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
   credentials: true,
 }));
 

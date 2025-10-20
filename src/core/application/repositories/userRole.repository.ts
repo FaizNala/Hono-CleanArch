@@ -3,5 +3,5 @@ import type { UserRole, CreateUserRoleData } from '../../domain/userRole.entity.
 // Repository Type - Contract for data access (Functional approach)
 export type UserRoleRepository = {
   create(userRoleData: CreateUserRoleData): Promise<UserRole>;
-  delete(userId: string, roleId?: number): Promise<boolean>;
+  delete(userId: number, roleId?: number): Promise<boolean>;
 };

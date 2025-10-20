@@ -4,7 +4,6 @@ import type { CreateRoleData, UpdateRoleData } from '../../domain/role.entity.js
 // Repository Type - Contract for data access (Functional approach)
 export type RoleRepository = {
   findById(id: number): Promise<Role | null>;
-  findByName(name: string): Promise<Role | null>;
   findAll(): Promise<Role[]>;
   create(roleData: CreateRoleData): Promise<Role>;
   update(id: number, roleData: UpdateRoleData): Promise<Role | null>;

@@ -1,5 +1,5 @@
 export type ResponseUserDto = {
-  id: string;
+  id: number;
   email: string;
   name: string;
   createdAt?: Date;

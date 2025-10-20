@@ -1,6 +1,6 @@
 // Domain Entity - Business Rules (Functional approach, tanpa validasi Zod)
 export type User = {
-  id: string;
+  id: number;
   email: string;
   name: string;
   password: string;

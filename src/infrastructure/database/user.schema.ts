@@ -1,11 +1,11 @@
 import { relations } from "drizzle-orm";
-import { uuid, varchar, timestamp, pgTable, index } from "drizzle-orm/pg-core";
+import { serial, varchar, timestamp, pgTable, index } from "drizzle-orm/pg-core";
 import { userRoles } from "./user-role.schema";
 
 export const users = pgTable(
   "users",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: serial("id").primaryKey(),
     email: varchar("email", { length: 255 }).notNull().unique(),
     name: varchar("name", { length: 255 }).notNull(),
     password: varchar("password", { length: 255 }).notNull(),

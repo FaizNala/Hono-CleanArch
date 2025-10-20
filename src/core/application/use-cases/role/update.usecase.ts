@@ -9,7 +9,7 @@ export async function updateRoleUseCase(id: number, roleData: UpdateRoleData, ro
     throw new Error('Role not found');
   }
   
-  // Update using domain function (with Zod validation)
+  // Update using domain function
   const updatedRoleData = updateRole(existing, roleData);
 
   return await roleRepository.update(id, {

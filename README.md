@@ -10,7 +10,7 @@ Boilerplate backend menggunakan Clean Architecture dengan teknologi modern:
 
 ### Prerequisites
 - Node.js 18+
-- Supabase account
+- Supabase or NeonDB account
 - PostgreSQL database
 
 ### Installation
