@@ -13,6 +13,8 @@ export const userRoles = pgTable(
     primaryKey({ columns: [table.userId, table.roleId] }),
     index('user_roles_user_id_idx').on(table.userId),
     index('user_roles_role_id_idx').on(table.roleId),
+    // 🚀 Composite index untuk optimasi permission check
+    index('user_roles_composite_idx').on(table.userId, table.roleId),
   ],
 );
 

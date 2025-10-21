@@ -13,6 +13,8 @@ export const rolePermissions = pgTable(
     primaryKey({ columns: [table.roleId, table.permissionId] }),
     index('role_permissions_role_id_idx').on(table.roleId),
     index('role_permissions_permission_id_idx').on(table.permissionId),
+    // 🚀 Composite index untuk optimasi JOIN dari user_roles ke role_permissions
+    index('role_permissions_composite_idx').on(table.roleId, table.permissionId),
   ],
 );
 
