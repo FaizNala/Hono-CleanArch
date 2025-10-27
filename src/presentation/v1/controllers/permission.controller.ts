@@ -8,10 +8,7 @@ import type { Repositories } from '../../../lib/types/repositories.js';
 import { success } from '../../../lib/utils/response.js';
 import { handleError } from '../../../lib/utils/errorHandler.js';
 import { getParamId } from '../../../lib/utils/requestHelper.js';
-import { 
-  CreatePermissionSchema, 
-  UpdatePermissionSchema
-} from '../../../lib/validation/permission.validation.js';
+import { CreatePermissionSchema, UpdatePermissionSchema } from '../../../lib/validation/permission.validation.js';
 import { toPermissionResponse } from '../mappers/permission.mapper.js';
 
 export function PermissionController(repositories: Repositories) {

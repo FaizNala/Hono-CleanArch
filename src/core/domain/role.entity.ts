@@ -14,14 +14,14 @@ export type UpdateRoleData = {
   permissionIds?: number[];
 };
 
-// Factory function to create a new Role entity (data sudah pasti valid dari controller)
+// Factory function to create a new Role entity
 export function createRole(data: CreateRoleData): Pick<Role, "name"> {
   return {
     name: data.name,
   };
 }
 
-// Function to update role details (data sudah pasti valid dari controller)
+// Function to update role details
 export function updateRole(currentRole: Role, data: UpdateRoleData): Role {
   return {
     ...currentRole,

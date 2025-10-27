@@ -20,7 +20,7 @@ export type UpdateUserData = {
   roleIds?: number[];
 };
 
-// Factory function to create a new User entity (data sudah pasti valid dari controller)
+// Factory function to create a new User entity
 export function createUser(data: CreateUserData): Pick<User, "email" | "name" | "password"> {
   return {
     email: data.email,
@@ -29,7 +29,7 @@ export function createUser(data: CreateUserData): Pick<User, "email" | "name" | 
   };
 }
 
-// Function to update user details (data sudah pasti valid dari controller)
+// Function to update user details
 export function updateUser(currentUser: User, data: UpdateUserData): User {
   return {
     ...currentUser,
